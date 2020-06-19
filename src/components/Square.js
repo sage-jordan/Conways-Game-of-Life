@@ -1,12 +1,16 @@
-import React from 'react';
-import App from '../App';
+import React, { Component } from 'react';
+// import App from '../App';
 import styled from 'styled-components'
 
-const Square = styled.div`
-
+const Cell = styled.div`
+    display: flex;
+    flex: 1;
+    padding: 10px;
+    margin: 1px;
+    border: 1px solid black;
 `
 
-export default class Square extends App {
+class Square extends Component {
     constructor(props) {
         super(props)
         this.state = props.state
@@ -14,7 +18,8 @@ export default class Square extends App {
 
     render() {
         return (
-            <Square props={this.state} />
+            <Cell props={this.state} />
         )
     }
 }
+export default Square

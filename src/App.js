@@ -8,32 +8,62 @@ class App extends Component {
     super(props)
     this.state = {
       size: [90, 20], // size of board. Will be mutated by user
-      alive: false, // current state: (alive, dead), (black, white)
-      clickable: false, // can be clicked to allow user to setup initial cell configuration
-      // should NOT be clickable while simulation is running
+      gameRunning: false
     }
 
-    // this.handleColumnChange = this.handleColumnChange.bind(this);
-    // this.handleRowChange = this.handleRowChange.bind(this);
-    // this.startGame = this.startGame.bind(this);
-    // this.stopGame = this.stopGame.bind(this);
+    this.handleColumnChange = this.handleColumnChange.bind(this);
+    this.handleRowChange = this.handleRowChange.bind(this);
+    this.startGame = this.startGame.bind(this);
+    this.stopGame = this.stopGame.bind(this);
     this.renderBoard = this.renderBoard.bind(this);
   }
 
-  // handleRowChange(event) {
-  // }
+  handleRowChange(event) {
+    if (!this.state.gameRunning) {
+      var actualSize = this.state.size;
 
-  // handleColumnChange(event) {
-  // }
+      if (event.target.value < 20) {
+        actualSize[1] = event.target.value;
+      } else {
+        actualSize[1] = 20;
+      }
 
-  // startGame() {
-  // }
+      this.setState({
+        size: actualSize
+      });
 
-  // stopGame() {
-  // }
+      this.renderBoard()
 
-  // runGame() {
-  // }
+    }
+  }
+
+  handleColumnChange(event) {
+    if (!this.state.gameRunning) {
+      var actualSize = this.state.size;
+
+      if (event.target.value < 90) {
+        actualSize[0] = event.target.value;
+      } else {
+        actualSize[0] = 90;
+      }
+
+      this.setState({
+        size: actualSize
+      });
+
+      this.renderBoard()
+
+    }
+  }
+
+  startGame() {
+  }
+
+  stopGame() {
+  }
+
+  runGame() {
+  }
 
   renderBoard() {
     var newWorld = []

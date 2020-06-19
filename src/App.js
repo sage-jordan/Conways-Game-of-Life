@@ -57,9 +57,23 @@ class App extends Component {
   }
 
   startGame() {
+    if (!this.state.gameRunning) {
+      this.setState({
+        gameRunning: true,
+      }, () => {
+        this.intervalRef = setInterval(() => this.runGame(), 10);
+      })
+    }
   }
 
   stopGame() {
+    this.setState({
+      gameRunning: false
+    }, () => {
+      if (this.intervalRef) {
+        clearInterval(this.intervalRef)
+      }
+    })
   }
 
   runGame() {

@@ -1,6 +1,6 @@
 import React, { Component, useEffect } from 'react';
 import styled from 'styled-components';
-
+import '../App.css'
 
 const Cell = styled.div`
     padding: 10px;

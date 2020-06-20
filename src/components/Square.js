@@ -1,6 +1,6 @@
-import React, { Component } from 'react';
+import React, { Component, useEffect } from 'react';
 import styled from 'styled-components';
-import './Square.css';
+
 
 const Cell = styled.div`
     padding: 10px;
@@ -20,7 +20,12 @@ class Square extends Component {
 
     }
 
-    toggleAlive() {
+    componentDidUpdate(prevProps) {
+        // Tried using this to update classes once state is changed but prevProps doesn't show "alive" prop
+    }
+
+    toggleAlive(event) {
+
         console.log(this.state.id)
         var thisCell = document.getElementById(this.state.id)
         if (this.state.alive) {

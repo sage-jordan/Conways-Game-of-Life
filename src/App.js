@@ -58,6 +58,7 @@ class App extends Component {
 
   startGame() {
     if (!this.state.gameRunning) {
+      console.log("Starting game...")
       this.setState({
         gameRunning: true,
       }, () => {
@@ -67,6 +68,7 @@ class App extends Component {
   }
 
   stopGame() {
+    console.log("Stopping game...")
     this.setState({
       gameRunning: false
     }, () => {
@@ -74,6 +76,10 @@ class App extends Component {
         clearInterval(this.intervalRef)
       }
     })
+  }
+
+  toggleLife(i) {
+
   }
 
   runGame() {
@@ -85,9 +91,9 @@ class App extends Component {
 
     for (var i = 0; i < this.state.size[0]; i++) { // loop over columns
       for (var j = 0; j < this.state.size[1]; j++) { // loop over rows
-        cellRow.push(<Square key={[i, j]} />) // for each instance, push a cell onto this row
+        cellRow.push(<Square key={[i, j]} id={[i, j]} />) // for each instance, push a cell onto this row
       } // done making all rows
-      newWorld.push(<div className="row" key={i}>{cellRow}</div>) // push each row to new board
+      newWorld.push(<div className="row" key={i} onClick={this.toggleLife(i)}>{cellRow}</div>) // push each row to new board
       cellRow = [] // reset cellRow
     }
     return newWorld // return our finished board

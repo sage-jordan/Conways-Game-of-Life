@@ -1,10 +1,8 @@
 import React, { Component } from 'react';
-// import App from '../App';
-import styled from 'styled-components'
+import styled from 'styled-components';
+import './Square.css';
 
 const Cell = styled.div`
-    display: flex;
-    flex: 1;
     padding: 10px;
     margin: 1px;
     border: 1px solid black;
@@ -13,12 +11,32 @@ const Cell = styled.div`
 class Square extends Component {
     constructor(props) {
         super(props)
-        this.state = props.state
+        this.state = {
+            alive: false,
+            id: props.id
+        }
+
+        this.toggleAlive = this.toggleAlive.bind(this);
+
+    }
+
+    toggleAlive() {
+        console.log(this.state.id)
+        var thisCell = document.getElementById(this.state.id)
+        if (this.state.alive) {
+            this.setState({ ...this.state, alive: !this.state.alive });
+            thisCell.classList.remove('alive');
+            console.log(thisCell);
+        } else {
+            this.setState({ ...this.state, alive: !this.state.alive });
+            thisCell.classList.add('alive');
+            console.log(thisCell);
+        }
     }
 
     render() {
         return (
-            <Cell props={this.state} />
+            <Cell onClick={this.toggleAlive} id={this.state.id} />
         )
     }
 }

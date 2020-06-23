@@ -8,7 +8,8 @@ class App extends Component {
     super(props)
     this.state = {
       size: [90, 20], // size of board. Will be mutated by user
-      gameRunning: false
+      gameRunning: false,
+      currentGrid: []
     }
 
     this.handleColumnChange = this.handleColumnChange.bind(this);
@@ -78,25 +79,31 @@ class App extends Component {
     })
   }
 
-  toggleLife(i) {
-
-  }
-
   runGame() {
+    // var newWorld = [] // define next grid
+    // const size = this.state.size // set size
+
+    // for (var x = 0; x < size[0]; x++) { // loops over x axis 
+    //   let row = [] // create a row for each
+    //   for (var y = 0; y < size[1]; y++) { // loop over y axis
+    //     // row.push(<Square key={[i, j]} id={[i, j]} />)
+    //   }
+    // }
   }
 
   renderBoard() {
-    var newWorld = []
+    this.state.currentGrid = []
     var cellRow = []
 
     for (var i = 0; i < this.state.size[0]; i++) { // loop over columns
       for (var j = 0; j < this.state.size[1]; j++) { // loop over rows
         cellRow.push(<Square key={[i, j]} id={[i, j]} />) // for each instance, push a cell onto this row
       } // done making all rows
-      newWorld.push(<div className="row" key={i} onClick={this.toggleLife(i)}>{cellRow}</div>) // push each row to new board
+      this.state.currentGrid.push(<div className="row" key={i} >{cellRow}</div>) // push each row to new board
       cellRow = [] // reset cellRow
     }
-    return newWorld // return our finished board
+    console.log(this.state.currentGrid)
+    return this.state.currentGrid // return our finished board
   }
 
   render() {

@@ -89,7 +89,7 @@ class App extends Component {
 
         // NOT SURE HOW TO ACCESS CELLS' STATE WHEN THEY ARE DOM ELEMENTS
         // console.log(grid[j].props.children[i])
-        var thisCell = document.getElementById([j, i])
+        var thisCell = document.getElementById([i, j])
         console.log(thisCell)
 
 

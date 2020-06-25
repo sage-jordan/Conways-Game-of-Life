@@ -4,20 +4,18 @@ import './App.css'
 import Square from './components/Square';
 
 class App extends Component {
-  constructor(props) {
-    super(props)
+  constructor() {
+    super();
+    this.speed = 100;
+    this.rows = 30;
+    this.cols = 50;
+
     this.state = {
-      size: [90, 20], // size of board. Will be mutated by user
       gameRunning: false,
-      currentGrid: [],
+      currentGrid: Array(this.state.size[1]).fill().map(() => Array(this.state.size[0]).fill(false)),
       generation: 0
     }
 
-    this.handleColumnChange = this.handleColumnChange.bind(this);
-    this.handleRowChange = this.handleRowChange.bind(this);
-    this.startGame = this.startGame.bind(this);
-    this.stopGame = this.stopGame.bind(this);
-    this.renderBoard = this.renderBoard.bind(this);
   }
 
   handleRowChange(event) {
@@ -172,18 +170,24 @@ class App extends Component {
   }
 
   renderBoard() {
-    this.state.currentGrid = []
+    var finishedBoard = []
     var cellRow = []
 
     for (var i = 0; i < this.state.size[0]; i++) { // loop over columns
       for (var j = 0; j < this.state.size[1]; j++) { // loop over rows
-        cellRow.push(<Square key={[i, j]} id={[i, j]} />) // for each instance, push a cell onto this row
+        if (this.state.currentGrid[i, j]) { // THIS NEEDS REFACTORED FOR NEW GRID
+          var square = Square([i, j]);
+          finishedBoard.push(square) // for each alive instance, push a cell onto this row
+          square.toggleAlive()
+        } else {
+          finishedBoard.push(<Square key={[i, j]} />)
+        }
       } // done making all rows
-      this.state.currentGrid.push(<div className="row" key={i} >{cellRow}</div>) // push each row to new board
+      finishedBoard.push(<div className="row" key={i} >{cellRow}</div>) // push each row to new board
       cellRow = [] // reset cellRow
     }
-    console.log(this.state.currentGrid)
-    return this.state.currentGrid // return our finished board
+    console.log(finishedBoard)
+    return finishedBoard // return our finished board
   }
 
   render() {

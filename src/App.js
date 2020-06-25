@@ -5,8 +5,8 @@ import Square from './components/Square';
 import Form from './components/Form';
 
 class App extends Component {
-  constructor() {
-    super();
+  constructor(props) {
+    super(props);
 
 
     this.state = {
@@ -17,31 +17,37 @@ class App extends Component {
       generation: 0
     }
     // console.log(this.state.currentGrid)
-
+    this.changeCurrentGridSize = this.changeCurrentGridSize.bind(this)
     this.handleRowChange = this.handleRowChange.bind(this)
     this.handleColumnChange = this.handleColumnChange.bind(this)
     this.startGame = this.startGame.bind(this)
     this.stopGame = this.stopGame.bind(this)
     this.runGame = this.runGame.bind(this)
     this.renderBoard = this.renderBoard.bind(this)
-
   }
 
+  changeCurrentGridSize(rows, cols) {
+    console.log(rows, cols); // logs correctly
+    console.log(Array(rows).fill().map(() => Array(cols).fill(false)));
+    // ^^ logs an array with one array(20)
+    this.setState({
+      ...this.state,
+      currentGrid: Array(rows).fill().map(() => Array(cols).fill(false))
+    });
+  }
   handleRowChange(event) {
     if (!this.state.gameRunning) {
       console.log(this.state.currentGrid)
-
-
       let rows = this.state.rows
-
-      if (event.target.value < 20) {
+      if (event.target.value < 90) {
         rows = event.target.value;
       } else {
-        rows = 20;
+        rows = 90;
       }
       this.setState({ rows: rows })
-      this.renderBoard()
-
+      this.changeCurrentGridSize(rows, this.state.col)
+      console.log(this.state.currentGrid)
+      // REACHING AN ERR HERE BC CURRENTGRID is [Array(20)]
     }
   }
 
@@ -51,18 +57,18 @@ class App extends Component {
 
       let col = this.state.col
 
-      if (event.target.value < 90) {
+      if (event.target.value < 20) {
         col = event.target.value;
       } else {
-        col = 90;
+        col = 20;
       }
 
       this.setState({ col: col })
+      this.changeCurrentGridSize(this.state.rows, col)
       this.renderBoard()
 
     }
   }
-
   startGame() {
     if (!this.state.gameRunning) {
       console.log("Starting game...")
@@ -174,10 +180,11 @@ class App extends Component {
   renderBoard() {
     var finishedBoard = []
     var cellRow = []
-    console.log(this.state.currentGrid)
+    // console.log(this.state.currentGrid)
     for (var i = 0; i < this.state.col; i++) { // loop over columns
       for (var j = 0; j < this.state.rows; j++) { // loop over rows
         // console.log("i: ", i, "j: " + j)
+        // console.log(this.state.currentGrid)
         if (this.state.currentGrid[i][j]) {
           cellRow.push(<Square key={[i, j]} id={[i, j]} alive={true} />)
         } else {
@@ -191,12 +198,16 @@ class App extends Component {
     return finishedBoard // return our finished board
   }
 
+  renderForm() {
+    return <Form state={this.state} renderBoard={this.renderBoard} handleColumnChange={this.handleColumnChange} handleRowChange={this.handleRowChange} />
+  }
+
   render() {
     return (
       <div className="worldContainer" >
         <header>
           <h1>Conway's Game of Life</h1>
-          <Form setRow={(i) => this.setState({ row: i })} handleColumnChange={this.handleColumnChange} handleRowChange={this.handleRowChange} rows={this.state.rows} col={this.state.col} />
+          {this.renderForm()}
         </header>
         <div className="headerButtons">
           <button className="submit" onClick={this.startGame}>Start</button>
@@ -205,7 +216,6 @@ class App extends Component {
         <Rules />
         Generation: {this.generation}
         <div className="boardContainer">
-          {this.renderBoard()}
         </div>
       </div>
     )

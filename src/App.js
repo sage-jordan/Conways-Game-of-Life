@@ -6,21 +6,20 @@ import Square from './components/Square';
 class App extends Component {
   constructor() {
     super();
-    this.speed = 100;
-    this.rows = 30;
-    this.cols = 50;
+    this.rows = 90
+    this.col = 20
 
     this.state = {
       gameRunning: false,
-      currentGrid: Array(this.state.size[1]).fill().map(() => Array(this.state.size[0]).fill(false)),
+      currentGrid: Array(this.rows).fill().map(() => Array(this.col).fill(false)),
       generation: 0
     }
-
+    console.log(this.state.currentGrid)
   }
 
   handleRowChange(event) {
     if (!this.state.gameRunning) {
-      var actualSize = this.state.size;
+      var actualSize = this.size;
 
       if (event.target.value < 20) {
         actualSize[1] = event.target.value;
@@ -39,7 +38,7 @@ class App extends Component {
 
   handleColumnChange(event) {
     if (!this.state.gameRunning) {
-      var actualSize = this.state.size;
+      var actualSize = this.size;
 
       if (event.target.value < 90) {
         actualSize[0] = event.target.value;
@@ -79,11 +78,11 @@ class App extends Component {
   }
 
   runGame() {
-    var size = this.state.size // define size
+    var size = this.size // define size
     var newWorld = [] // define new grid
     var grid = this.state.currentGrid
-    for (var i = 0; i < this.state.size[0]; i++) { // loop over columns
-      for (var j = 0; j < this.state.size[1]; j++) { // loop over rows
+    for (var i = 0; i < this.col; i++) { // loop over columns
+      for (var j = 0; j < this.rows; j++) { // loop over rows
 
         // NOT SURE HOW TO ACCESS CELLS' STATE WHEN THEY ARE DOM ELEMENTS
         // console.log(grid[j].props.children[i])
@@ -95,7 +94,7 @@ class App extends Component {
 
         // Right Neighbor
         if (i < size[0] - 1) { // check if row has reached the end
-          if (grid[j][i + 1].alive) { // check neighbor
+          if (this.state.currentGrid[j][i + 1].alive) { // check neighbor
             liveNeighbors++ // increment this cell's neighbors
           }
         }
@@ -173,14 +172,12 @@ class App extends Component {
     var finishedBoard = []
     var cellRow = []
 
-    for (var i = 0; i < this.state.size[0]; i++) { // loop over columns
-      for (var j = 0; j < this.state.size[1]; j++) { // loop over rows
-        if (this.state.currentGrid[i, j]) { // THIS NEEDS REFACTORED FOR NEW GRID
-          var square = Square([i, j]);
-          finishedBoard.push(square) // for each alive instance, push a cell onto this row
-          square.toggleAlive()
+    for (var i = 0; i < this.col; i++) { // loop over columns
+      for (var j = 0; j < this.rows; j++) { // loop over rows
+        if (this.state.currentGrid[i][j]) {
+          cellRow.push(<Square key={[i, j]} alive={true} />)
         } else {
-          finishedBoard.push(<Square key={[i, j]} />)
+          cellRow.push(<Square key={[i, j]} alive={false} />)
         }
       } // done making all rows
       finishedBoard.push(<div className="row" key={i} >{cellRow}</div>) // push each row to new board
@@ -198,11 +195,11 @@ class App extends Component {
           <div className="headerInnerContainer">
             <label className="label">
               Rows:
-            <input className="input" type="text" value={this.state.size[1]} onChange={this.handleRowChange} />
+            <input className="input" type="text" value={this.rows} onChange={this.handleRowChange} />
             </label>
             <label className="label">
               Columns:
-            <input className="input" type="text" value={this.state.size[0]} onChange={this.handleColumnChange} />
+            <input className="input" type="text" value={this.col} onChange={this.handleColumnChange} />
             </label>
           </div>
         </header>
@@ -218,7 +215,5 @@ class App extends Component {
       </div>
     )
   }
-
 }
-
 export default App;

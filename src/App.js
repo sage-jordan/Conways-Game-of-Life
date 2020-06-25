@@ -1,221 +1,210 @@
 import React, { Component } from 'react';
-import Rules from './components/Rules';
+import Rules from './Rules';
 import './App.css'
-import Square from './components/Square';
-import Form from './components/Form';
+
+const totalBoardRows = 100;
+const totalBoardColumns = 150;
+
+const newBoardStatus = (cellStatus = () => Math.random() < 0.3) => { //injects true/false
+  const grid = []; // initiate grid array
+  for (let r = 0; r < totalBoardRows; r++) { //loop over rows
+    grid[r] = []; // each row has a new array
+    for (let c = 0; c < totalBoardColumns; c++) { //loop over columns
+      grid[r][c] = cellStatus(); // each column has a new random boolean
+    }
+  }
+  return grid; // returns an array of arrays with bool vals
+};
+
+const BoardGrid = ({ boardStatus, onToggleCellStatus }) => {
+  // takes in board status and a method to toggle cell status
+  const handleClick = (r, c) => onToggleCellStatus(r, c); // re-defining func
+
+  const tr = []; // initiate grid
+  for (let r = 0; r < totalBoardRows; r++) { //loop over rows
+    const td = []; //initiate row
+    for (let c = 0; c < totalBoardColumns; c++) { //loop over columns
+      td.push( // each column, push a new cell to the row
+        <td
+          key={`${r},${c}`}
+          className={boardStatus[r][c] ? 'alive' : 'dead'}
+          onClick={() => handleClick(r, c)}
+        />
+      );
+    }
+    tr.push(<tr key={r}>{td}</tr>); //after each row, push it onto the grid
+  }
+  return <table><tbody>{tr}</tbody></table>;
+};
+
+const Slider = ({ speed, onSpeedChange }) => {
+  // takes a speed and func to change it
+  const handleChange = e => onSpeedChange(e.target.value); // handle change
+
+  return ( // return a range input to control speed
+    <input
+      type='range'
+      min='50'
+      max='1000'
+      step='50'
+      value={speed}
+      onChange={handleChange}
+    />
+  );
+};
 
 class App extends Component {
-  constructor(props) {
-    super(props);
+  state = { // INITIATE STATE
+    boardStatus: newBoardStatus(),
+    generation: 0,
+    isGameRunning: false,
+    speed: 500
+  }
 
+  runStopButton = () => { // BUTTONS
+    return this.state.isGameRunning ? // checks if the game is running
+      <button type='button' onClick={this.handleStop}>Stop</button> :
+      <button type='button' onClick={this.handleRun}>Start</button>
+    // and returns the correct button
+  }
 
-    this.state = {
-      rows: 90,
-      col: 20,
-      gameRunning: false,
-      currentGrid: Array(90).fill().map(() => Array(20).fill(false)),
+  handleClearBoard = () => { // CLEAR GRID
+    this.setState({
+      boardStatus: newBoardStatus(() => false), // run this func, passing in all false vals
+      generation: 0 // reset generation
+    })
+  }
+
+  handleNewBoard = () => { // RANDOMIZER
+    this.setState({
+      boardStatus: newBoardStatus(), // this time, we use the default random status
       generation: 0
-    }
-    // console.log(this.state.currentGrid)
-    this.changeCurrentGridSize = this.changeCurrentGridSize.bind(this)
-    this.handleRowChange = this.handleRowChange.bind(this)
-    this.handleColumnChange = this.handleColumnChange.bind(this)
-    this.startGame = this.startGame.bind(this)
-    this.stopGame = this.stopGame.bind(this)
-    this.runGame = this.runGame.bind(this)
-    this.renderBoard = this.renderBoard.bind(this)
-  }
-
-  changeCurrentGridSize(rows, cols) {
-    console.log(rows, cols); // logs correctly
-    console.log(Array(rows).fill().map(() => Array(cols).fill(false)));
-    // ^^ logs an array with one array(20)
-    this.setState({
-      ...this.state,
-      currentGrid: Array(rows).fill().map(() => Array(cols).fill(false))
-    });
-  }
-  handleRowChange(event) {
-    if (!this.state.gameRunning) {
-      console.log(this.state.currentGrid)
-      let rows = this.state.rows
-      if (event.target.value < 90) {
-        rows = event.target.value;
-      } else {
-        rows = 90;
-      }
-      this.setState({ rows: rows })
-      this.changeCurrentGridSize(rows, this.state.col)
-      console.log(this.state.currentGrid)
-      // REACHING AN ERR HERE BC CURRENTGRID is [Array(20)]
-    }
-  }
-
-  handleColumnChange(event) {
-    if (!this.state.gameRunning) {
-      console.log(this.state.currentGrid)
-
-      let col = this.state.col
-
-      if (event.target.value < 20) {
-        col = event.target.value;
-      } else {
-        col = 20;
-      }
-
-      this.setState({ col: col })
-      this.changeCurrentGridSize(this.state.rows, col)
-      this.renderBoard()
-
-    }
-  }
-  startGame() {
-    if (!this.state.gameRunning) {
-      console.log("Starting game...")
-      this.setState({
-        gameRunning: true,
-      }, () => {
-        this.intervalRef = setInterval(() => this.runGame(), 10);
-      })
-    }
-  }
-
-  stopGame() {
-    console.log("Stopping game...")
-    this.setState({
-      gameRunning: false
-    }, () => {
-      if (this.intervalRef) {
-        clearInterval(this.intervalRef)
-      }
     })
   }
 
-  runGame() {
-    var rows = this.rows
-    var col = this.col
-    var newWorld = [] // define new grid
-    var grid = this.state.currentGrid
-    for (var i = 0; i < this.col; i++) { // loop over columns
-      for (var j = 0; j < this.rows; j++) { // loop over rows
-
-        let liveNeighbors = 0 // initiate liveNeighbors count
-
-        // Right Neighbor
-        if (i < rows - 1) { // check if row has reached the end
-          if (this.state.currentGrid[j][i + 1].alive) { // check neighbor
-            liveNeighbors++ // increment this cell's neighbors
-          }
-        }
-
-        // Bottom-right neighbor
-        if (j < col - 1 && i < rows - 1) {
-          if (grid[j + 1][i + 1].alive) {
-            liveNeighbors++
-          }
-        }
-
-        // Bottom neighbor
-        if (j < col - 1) {
-          if (grid[j + 1][i].alive) {
-            liveNeighbors++
-          }
-        }
-
-        // Bottom-left neighbor
-        if (j < col - 1 && i > 0) {
-          if (grid[j + 1][i - 1].alive) {
-            liveNeighbors++
-          }
-        }
-
-        // Left neighbor
-        if (i > 0) {
-          if (grid[j][i - 1].alive) {
-            liveNeighbors++
-          }
-        }
-
-        // Top-left neighbor
-        if (i > 0 && j > 0) {
-          if (grid[j - 1][i - 1].alive) {
-            liveNeighbors++
-          }
-        }
-
-        // Top neighbor
-        if (j > 0) {
-          if (grid[j - 1][i].alive) {
-            liveNeighbors++
-          }
-        }
-
-        // Top-right neighbor
-        if (j > 0 && i < rows - 1) {
-          if (grid[j - 1][i + 1].alive) {
-            liveNeighbors++
-          }
-        }
-
-        // Apply life/death rules based on neighbor count
-
-        if (!grid[j][i].alive && liveNeighbors === 3) { // if cell is dead and has 3 neighbors
-          newWorld[j][i].alive = true; // GETS RESURECTED :o
-        }
-
-        if (grid[j][i].alive && (liveNeighbors > 3 || liveNeighbors < 2)) { // if alive AND neighbors == 1 or > 3
-          newWorld[j][i].alive = false; // dies
-        }
-
-      } // done checking all rows
-
-    } // done checking all columns
-
-    this.setState({
-      generation: this.state.generation + 1,
-      currentGrid: newWorld
-    })
-  }
-
-  renderBoard() {
-    var finishedBoard = []
-    var cellRow = []
-    // console.log(this.state.currentGrid)
-    for (var i = 0; i < this.state.col; i++) { // loop over columns
-      for (var j = 0; j < this.state.rows; j++) { // loop over rows
-        // console.log("i: ", i, "j: " + j)
-        // console.log(this.state.currentGrid)
-        if (this.state.currentGrid[i][j]) {
-          cellRow.push(<Square key={[i, j]} id={[i, j]} alive={true} />)
-        } else {
-          cellRow.push(<Square key={[i, j]} id={[i, j]} alive={false} />)
-        }
-      } // done making all rows
-      finishedBoard.push(<div className="row" key={i} >{cellRow}</div>) // push each row to new board
-      cellRow = [] // reset cellRow
+  handleToggleCellStatus = (r, c) => { // TOGGLE ALIVE
+    const toggleBoardStatus = prevState => {
+      // func using prevState from setState
+      const clonedBoardStatus = JSON.parse(JSON.stringify(prevState.boardStatus));
+      // "deep clone" of board status 
+      clonedBoardStatus[r][c] = !clonedBoardStatus[r][c]; //toggle status
+      return clonedBoardStatus
     }
-    // console.log(finishedBoard)
-    return finishedBoard // return our finished board
+
+    this.setState(prevState => ({
+      // setState gives PrevState if it takes a function
+      boardStatus: toggleBoardStatus(prevState)
+    }))
   }
 
-  renderForm() {
-    return <Form state={this.state} renderBoard={this.renderBoard} handleColumnChange={this.handleColumnChange} handleRowChange={this.handleRowChange} />
+  handleStep = () => { // GENERATE NEXT GRID
+    const nextStep = prevState => {
+      const boardStatus = prevState.boardStatus // previous status
+      const clonedBoardStatus = JSON.parse(JSON.stringify(boardStatus))
+      // clone board for double buffer
+
+      const amountTrueNeighbors = (r, c) => { // function to count neighbors
+        const neighbors = [[-1, -1], [-1, 0], [-1, 1], [0, 1], [1, 1], [1, 0], [1, -1], [0, -1]];
+        // array for all possible neighbor combinations
+        return neighbors.reduce((trueNeighbors, neighbor) => {
+          // reduce neighbors, adding each true neighbor to trueNeighbors
+          const x = r + neighbor[0]; // row index of neighbor
+          const y = c + neighbor[1]; // col index of neighbor
+          const isNeighborOnBoard = ( // bool true if this index is on the board
+            x >= 0 && // row index has not reached the left
+            x < totalBoardRows &&  // row index is not reached the last
+            y >= 0 && // col index has not reached the top
+            y < totalBoardColumns) // col index has not reached the last
+
+          if (trueNeighbors < 4 && isNeighborOnBoard && boardStatus[x][y]) {
+            // increment neighbors if it's on the board, it is true, 
+            // and there are less than 4 neighbors.(no need to count more than 4)
+            return trueNeighbors + 1; // return neighbor count incremented
+          } else {
+            // if any of that isn't true, we don't need to incrememnt
+            return trueNeighbors; // return neighbor count
+          }
+        }, 0);
+      };
+
+      for (let r = 0; r < totalBoardRows; r++) { // loop over rows
+        for (let c = 0; c < totalBoardColumns; c++) { // loop over cols
+          const totalTrueNeighbors = amountTrueNeighbors(r, c);
+          // each cell, call func to count neighbors, passing in each index
+
+          if (!boardStatus[r][c]) { // if cell is dead
+            // and neighbors = 3, set cell alive
+            if (totalTrueNeighbors === 3) clonedBoardStatus[r][c] = true;
+          } else { // if cell is alive
+            // and neighbors are less than two or more than 3, cell dies
+            if (totalTrueNeighbors < 2 || totalTrueNeighbors > 3) clonedBoardStatus[r][c] = false;
+          }
+        }
+      }
+
+      return clonedBoardStatus; // return cloned and modified grid
+    }
+
+    this.setState(prevState => ({
+      boardStatus: nextStep(prevState), // set new status to run double buffer
+      generation: prevState.generation + 1 // increment generation
+    }))
+  }
+
+  handleSpeedChange = newSpeed => { // CHANGE SPEED
+    this.setState({ speed: newSpeed })
+  }
+
+  handleRun = () => { // RUN GAME
+    this.setState({ isGameRunning: true })
+  }
+
+  handleStop = () => { // STOP GAME
+    this.setState({ isGameRunning: false })
+  }
+
+  componentDidUpdate(prevProps, prevState) { // HANDLING STATE CHANGES
+    const { isGameRunning, speed } = this.state; // destructure state
+    const speedChanged = prevState.speed !== speed; // true if speed changed
+    const gameStarted = !prevState.isGameRunning && isGameRunning;
+    // true if game was previously stopped, and is currently running
+    const gameStopped = prevState.isGameRunning && !isGameRunning;
+    // true if game was previously running, and is currently stopped
+
+    if ((isGameRunning && speedChanged) || gameStopped) {
+      // if running and speed was changed, or if the game stopped running
+      clearInterval(this.timerID) // clear the game timer
+    }
+
+    if ((isGameRunning && speedChanged) || gameStarted) {
+      // if running and speed was changed, or if the game has started running
+      this.timerID = setInterval(() => { // set timer
+        this.handleStep() // generate the next grid
+      }, speed) // time of speed
+    }
   }
 
   render() {
+    const { boardStatus, isGameRunning, generation, speed } = this.state;
+    // destructure state
+
     return (
-      <div className="worldContainer" >
-        <header>
-          <h1>Conway's Game of Life</h1>
-          {this.renderForm()}
-        </header>
-        <div className="headerButtons">
-          <button className="submit" onClick={this.startGame}>Start</button>
-          <button className="submit" onClick={this.stopGame}>Stop</button>
+      <div>
+        <h1>Game of Life</h1>
+        <BoardGrid boardStatus={boardStatus} onToggleCellStatus={this.handleToggleCellStatus} />
+        <div className='flexRow upperControls'>
+          <span>
+            {'+ '}
+            <Slider speed={speed} onSpeedChange={this.handleSpeedChange} />
+            {' -'}
+          </span>
+          {`Generation: ${generation}`}
         </div>
-        <Rules />
-        Generation: {this.generation}
-        <div className="boardContainer">
+        <div className='flexRow lowerControls'>
+          {this.runStopButton()}
+          <button type='button' disabled={isGameRunning} onClick={this.handleStep}>Step</button>
+          <button type='button' onClick={this.handleClearBoard}>Clear Board</button>
+          <button type='button' onClick={this.handleNewBoard}>New Board</button>
         </div>
       </div>
     )

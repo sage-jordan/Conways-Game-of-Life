@@ -191,7 +191,7 @@ class App extends Component {
     return (
       <div>
         <h1>Game of Life</h1>
-        <BoardGrid boardStatus={boardStatus} onToggleCellStatus={this.handleToggleCellStatus} />
+        <Rules />
         <div className='flexRow upperControls'>
           <span>
             {'+ '}
@@ -206,6 +206,7 @@ class App extends Component {
           <button type='button' onClick={this.handleClearBoard}>Clear Board</button>
           <button type='button' onClick={this.handleNewBoard}>New Board</button>
         </div>
+        <BoardGrid boardStatus={boardStatus} onToggleCellStatus={this.handleToggleCellStatus} />
       </div>
     )
   }

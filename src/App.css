@@ -1,33 +1,66 @@
 body {
   color: white;
-  background-color: rgb(70, 152, 228);
-  margin: 10% auto;
+  background-color: rgb(14, 15, 25);
+  margin: auto 10%;
 }
 
 td {
   width: 10px;
   height: 10px;
-  background-color: rgb(15, 44, 44);
+  background-color: rgb(101, 126, 212);
 }
 
 h1 {
   width: 200px;
   margin: 0 auto;
+  padding:  2%;
 }
 
 table {
-  background-color: black;
+  background-color: rgb(57, 67, 183);
   margin: 0 auto;
 }
 
 .alive {
-  background-color: white;
+  background-color: rgb(120, 188, 97);
 }
 
 .alive:hover {
-  background-color: teal;
+  background-color: crimson;
 }
 
 .dead:hover {
-  background-color: darkslategray;
+  background-color: white;
+}
+
+.upperControls {
+  display: flex;
+  flex-direction: column;
+  width: 175px;
+  margin: 0 auto;
+  align-items: center;
+}
+
+.lowerControls {
+  margin: 0 auto;
+  width: 50%;
+}
+
+.flexRow {
+  display: flex;
+}
+
+button {
+  width: 20%;
+  align-self: center;
+  color: white;
+  border-radius: 25px;
+  background-color: rgb(120, 188, 97);
+  margin: 2%;
+  
+}
+
+.rules {
+  margin: auto;
+  padding:  0 10%;
 }

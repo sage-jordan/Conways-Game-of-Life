@@ -2,35 +2,44 @@ import React, { Component } from 'react';
 import Rules from './components/Rules';
 import './App.css'
 import Square from './components/Square';
+import Form from './components/Form';
 
 class App extends Component {
   constructor() {
     super();
-    this.rows = 90
-    this.col = 20
+
 
     this.state = {
+      rows: 90,
+      col: 20,
       gameRunning: false,
-      currentGrid: Array(this.rows).fill().map(() => Array(this.col).fill(false)),
+      currentGrid: Array(90).fill().map(() => Array(20).fill(false)),
       generation: 0
     }
-    console.log(this.state.currentGrid)
+    // console.log(this.state.currentGrid)
+
+    this.handleRowChange = this.handleRowChange.bind(this)
+    this.handleColumnChange = this.handleColumnChange.bind(this)
+    this.startGame = this.startGame.bind(this)
+    this.stopGame = this.stopGame.bind(this)
+    this.runGame = this.runGame.bind(this)
+    this.renderBoard = this.renderBoard.bind(this)
+
   }
 
   handleRowChange(event) {
     if (!this.state.gameRunning) {
-      var actualSize = this.size;
+      console.log(this.state.currentGrid)
+
+
+      let rows = this.state.rows
 
       if (event.target.value < 20) {
-        actualSize[1] = event.target.value;
+        rows = event.target.value;
       } else {
-        actualSize[1] = 20;
+        rows = 20;
       }
-
-      this.setState({
-        size: actualSize
-      });
-
+      this.setState({ rows: rows })
       this.renderBoard()
 
     }
@@ -38,18 +47,17 @@ class App extends Component {
 
   handleColumnChange(event) {
     if (!this.state.gameRunning) {
-      var actualSize = this.size;
+      console.log(this.state.currentGrid)
+
+      let col = this.state.col
 
       if (event.target.value < 90) {
-        actualSize[0] = event.target.value;
+        col = event.target.value;
       } else {
-        actualSize[0] = 90;
+        col = 90;
       }
 
-      this.setState({
-        size: actualSize
-      });
-
+      this.setState({ col: col })
       this.renderBoard()
 
     }
@@ -78,43 +86,38 @@ class App extends Component {
   }
 
   runGame() {
-    var size = this.size // define size
+    var rows = this.rows
+    var col = this.col
     var newWorld = [] // define new grid
     var grid = this.state.currentGrid
     for (var i = 0; i < this.col; i++) { // loop over columns
       for (var j = 0; j < this.rows; j++) { // loop over rows
 
-        // NOT SURE HOW TO ACCESS CELLS' STATE WHEN THEY ARE DOM ELEMENTS
-        // console.log(grid[j].props.children[i])
-        var thisCell = document.getElementById([i, j])
-        console.log(thisCell)
-
-
         let liveNeighbors = 0 // initiate liveNeighbors count
 
         // Right Neighbor
-        if (i < size[0] - 1) { // check if row has reached the end
+        if (i < rows - 1) { // check if row has reached the end
           if (this.state.currentGrid[j][i + 1].alive) { // check neighbor
             liveNeighbors++ // increment this cell's neighbors
           }
         }
 
         // Bottom-right neighbor
-        if (j < size[1] - 1 && i < size[0] - 1) {
+        if (j < col - 1 && i < rows - 1) {
           if (grid[j + 1][i + 1].alive) {
             liveNeighbors++
           }
         }
 
         // Bottom neighbor
-        if (j < size[1] - 1) {
+        if (j < col - 1) {
           if (grid[j + 1][i].alive) {
             liveNeighbors++
           }
         }
 
         // Bottom-left neighbor
-        if (j < size[1] - 1 && i > 0) {
+        if (j < col - 1 && i > 0) {
           if (grid[j + 1][i - 1].alive) {
             liveNeighbors++
           }
@@ -142,7 +145,7 @@ class App extends Component {
         }
 
         // Top-right neighbor
-        if (j > 0 && i < size[0] - 1) {
+        if (j > 0 && i < rows - 1) {
           if (grid[j - 1][i + 1].alive) {
             liveNeighbors++
           }
@@ -171,19 +174,20 @@ class App extends Component {
   renderBoard() {
     var finishedBoard = []
     var cellRow = []
-
-    for (var i = 0; i < this.col; i++) { // loop over columns
-      for (var j = 0; j < this.rows; j++) { // loop over rows
+    console.log(this.state.currentGrid)
+    for (var i = 0; i < this.state.col; i++) { // loop over columns
+      for (var j = 0; j < this.state.rows; j++) { // loop over rows
+        // console.log("i: ", i, "j: " + j)
         if (this.state.currentGrid[i][j]) {
-          cellRow.push(<Square key={[i, j]} alive={true} />)
+          cellRow.push(<Square key={[i, j]} id={[i, j]} alive={true} />)
         } else {
-          cellRow.push(<Square key={[i, j]} alive={false} />)
+          cellRow.push(<Square key={[i, j]} id={[i, j]} alive={false} />)
         }
       } // done making all rows
       finishedBoard.push(<div className="row" key={i} >{cellRow}</div>) // push each row to new board
       cellRow = [] // reset cellRow
     }
-    console.log(finishedBoard)
+    // console.log(finishedBoard)
     return finishedBoard // return our finished board
   }
 
@@ -192,16 +196,7 @@ class App extends Component {
       <div className="worldContainer" >
         <header>
           <h1>Conway's Game of Life</h1>
-          <div className="headerInnerContainer">
-            <label className="label">
-              Rows:
-            <input className="input" type="text" value={this.rows} onChange={this.handleRowChange} />
-            </label>
-            <label className="label">
-              Columns:
-            <input className="input" type="text" value={this.col} onChange={this.handleColumnChange} />
-            </label>
-          </div>
+          <Form setRow={(i) => this.setState({ row: i })} handleColumnChange={this.handleColumnChange} handleRowChange={this.handleRowChange} rows={this.state.rows} col={this.state.col} />
         </header>
         <div className="headerButtons">
           <button className="submit" onClick={this.startGame}>Start</button>

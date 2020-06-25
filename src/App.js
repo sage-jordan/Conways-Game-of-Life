@@ -2,8 +2,8 @@ import React, { Component } from 'react';
 import Rules from './Rules';
 import './App.css'
 
-const totalBoardRows = 100;
-const totalBoardColumns = 150;
+const totalBoardRows = 40;
+const totalBoardColumns = 60;
 
 const newBoardStatus = (cellStatus = () => Math.random() < 0.3) => { //injects true/false
   const grid = []; // initiate grid array
@@ -198,7 +198,7 @@ class App extends Component {
             <Slider speed={speed} onSpeedChange={this.handleSpeedChange} />
             {' -'}
           </span>
-          {`Generation: ${generation}`}
+          {`\nGeneration: ${generation}`}
         </div>
         <div className='flexRow lowerControls'>
           {this.runStopButton()}

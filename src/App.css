@@ -1,52 +1,33 @@
-.worldContainer {
-  /* display: flex; */
-  /* flex-direction: column; */
-  /* flex: 1; */
+body {
+  color: white;
+  background-color: rgb(70, 152, 228);
+  margin: 10% auto;
 }
 
-header {
-  display: flex;
-  flex-direction: column;
-  flex: 1;
+td {
+  width: 10px;
+  height: 10px;
+  background-color: rgb(15, 44, 44);
 }
 
-.submit {
-  width: 50%;
-  margin: 5px;
-}
-
-.headerInnerContainer {
-  display: flex;
-  text-align: center;
+h1 {
   width: 200px;
-  padding: 20px 20px 0 20px;
+  margin: 0 auto;
 }
 
-.label {
-  display: flex;
-  margin-bottom: 16px;
-  margin-right: 10px;
-}
-
-.input {
-  margin-left: 5px;
-}
-
-.boardContainer {
-  display: flex;
-  flex: 1;
-  justify-content: center;
-  padding: 0 60px;
-}
-
-.headerButtons {
-  display: flex;
-  justify-content: space-between;
-  width: 20%;
-  padding: 0 20px 20px;
+table {
+  background-color: black;
+  margin: 0 auto;
 }
 
 .alive {
-  background-color: black;
-  border: 1px solid crimson;
+  background-color: white;
+}
+
+.alive:hover {
+  background-color: teal;
+}
+
+.dead:hover {
+  background-color: darkslategray;
 }

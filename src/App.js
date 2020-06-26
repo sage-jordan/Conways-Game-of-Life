@@ -16,8 +16,7 @@ const newBoardStatus = (cellStatus = () => Math.random() < 0.3) => { //injects t
   return grid; // returns an array of arrays with bool vals
 };
 
-const BoardGrid = ({ boardStatus, onToggleCellStatus }) => {
-  // takes in board status and a method to toggle cell status
+const BoardGrid = ({ boardStatus, onToggleCellStatus }) => {// takes in board status and a method to toggle cell status
   const handleClick = (r, c) => onToggleCellStatus(r, c); // re-defining func
 
   const tr = []; // initiate grid
@@ -37,11 +36,10 @@ const BoardGrid = ({ boardStatus, onToggleCellStatus }) => {
   return <table><tbody>{tr}</tbody></table>;
 };
 
-const Slider = ({ speed, onSpeedChange }) => {
-  // takes a speed and func to change it
-  const handleChange = e => onSpeedChange(e.target.value); // handle change
+const Slider = ({ speed, onSpeedChange }) => { // takes a speed and func to change it
+  const handleChange = e => onSpeedChange(e.target.value); // handle change // return a range input to control speed
 
-  return ( // return a range input to control speed
+  return (
     <input
       type='range'
       min='50'
@@ -83,31 +81,25 @@ class App extends Component {
   }
 
   handleToggleCellStatus = (r, c) => { // TOGGLE ALIVE
-    const toggleBoardStatus = prevState => {
-      // func using prevState from setState
-      const clonedBoardStatus = JSON.parse(JSON.stringify(prevState.boardStatus));
-      // "deep clone" of board status 
+    const toggleBoardStatus = prevState => { // func using prevState from setState
+      const clonedBoardStatus = JSON.parse(JSON.stringify(prevState.boardStatus)); // "deep clone" of board status 
       clonedBoardStatus[r][c] = !clonedBoardStatus[r][c]; //toggle status
       return clonedBoardStatus
     }
 
-    this.setState(prevState => ({
-      // setState gives PrevState if it takes a function
+    this.setState(prevState => ({ // setState gives PrevState if it takes a function
       boardStatus: toggleBoardStatus(prevState)
     }))
   }
 
   handleStep = () => { // GENERATE NEXT GRID
     const nextStep = prevState => {
-      const boardStatus = prevState.boardStatus // previous status
-      const clonedBoardStatus = JSON.parse(JSON.stringify(boardStatus))
-      // clone board for double buffer
+      const boardStatus = prevState.boardStatus; // previous status
+      const clonedBoardStatus = JSON.parse(JSON.stringify(boardStatus)); // clone board for double buffer
 
       const amountTrueNeighbors = (r, c) => { // function to count neighbors
-        const neighbors = [[-1, -1], [-1, 0], [-1, 1], [0, 1], [1, 1], [1, 0], [1, -1], [0, -1]];
-        // array for all possible neighbor combinations
-        return neighbors.reduce((trueNeighbors, neighbor) => {
-          // reduce neighbors, adding each true neighbor to trueNeighbors
+        const neighbors = [[-1, -1], [-1, 0], [-1, 1], [0, 1], [1, 1], [1, 0], [1, -1], [0, -1]];// array for all possible neighbor combinations
+        return neighbors.reduce((trueNeighbors, neighbor) => {// reduce neighbors, adding each true neighbor to trueNeighbors
           const x = r + neighbor[0]; // row index of neighbor
           const y = c + neighbor[1]; // col index of neighbor
           const isNeighborOnBoard = ( // bool true if this index is on the board
@@ -116,9 +108,7 @@ class App extends Component {
             y >= 0 && // col index has not reached the top
             y < totalBoardColumns) // col index has not reached the last
 
-          if (trueNeighbors < 4 && isNeighborOnBoard && boardStatus[x][y]) {
-            // increment neighbors if it's on the board, it is true, 
-            // and there are less than 4 neighbors.(no need to count more than 4)
+          if (trueNeighbors < 4 && isNeighborOnBoard && boardStatus[x][y]) { // increment neighbors if it's on the board, it is true, and there are less than 4 neighbors.(no need to count more than 4)
             return trueNeighbors + 1; // return neighbor count incremented
           } else {
             // if any of that isn't true, we don't need to incrememnt
@@ -186,7 +176,6 @@ class App extends Component {
 
   render() {
     const { boardStatus, isGameRunning, generation, speed } = this.state;
-    // destructure state
 
     return (
       <div>
